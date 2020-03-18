@@ -15,9 +15,10 @@ void matchDescriptors (std::vector<cv::KeyPoint> &kPtsSource, std::vector<cv::Ke
   ///////////////////////////////////////////////////////////////////////
   /// MATCHING TYPE -- brute force or flann
   //
+  cout << " selecting matcher \n";
   if (matcherType.compare("MAT_BF") == 0)
     {
-      int normType = cv::NORM_HAMMING;
+      int normType = descriptorType.compare("DES_BINARY") == 0 ? cv::NORM_HAMMING : cv::NORM_L2;
       matcher = cv::BFMatcher::create (normType, crossCheck);
     }
   else if (matcherType.compare("MAT_FLANN") == 0)
@@ -38,17 +39,20 @@ void matchDescriptors (std::vector<cv::KeyPoint> &kPtsSource, std::vector<cv::Ke
   // perform matching task
   if (selectorType.compare("SEL_NN") == 0)
     {
+	cout << "   doing match  SEL_NN \n";
       // nearest neighbor (best match)
       matcher->match(descSource, descRef, matches);
     }
   else if (selectorType.compare("SEL_KNN") == 0)
     {
       // k nearest neighbors (k=2)
+	cout << "   doing match  SEL_K_NN  A \n";
       vector<vector<cv::DMatch>> knn_matches;
       matcher->knnMatch(descSource, descRef, knn_matches, 2); 
 
       // Ratio test
       double minDescDistRatio = 0.8;
+	cout << "   doing match  SEL_K_NN  B \n";
       for (auto it = knn_matches.begin(); it != knn_matches.end(); ++it)
         {
           if ((*it)[0].distance < minDescDistRatio * (*it)[1].distance)
@@ -88,14 +92,13 @@ double descKeypoints (vector<cv::KeyPoint> &keypoints, cv::Mat &img, cv::Mat &de
       extractor = cv::BRISK::create();
     } else if (descriptorType.compare("BRIEF") == 0)
     {
-      //extractor = cv::xfeatures2d::BriefDescriptorExtractor::create();
+      extractor = cv::xfeatures2d::BriefDescriptorExtractor::create();
     } else if (descriptorType.compare("FREAK") == 0)
     {
-      //extractor = cv::xfeatures2d::FREAK::create();
+      extractor = cv::xfeatures2d::FREAK::create();
     } else if (descriptorType.compare("SIFT") == 0)
     {
-      // NOT ON MY PC
-      //extractor = cv::xfeatures2d::SIFT::create();
+      extractor = cv::xfeatures2d::SIFT::create();
     } else
     {
       cout << " descriptor type is unknown! \n";
@@ -305,21 +308,20 @@ double detKeypointsFAST (std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, boo
 
 double detKeypointsBRISK (std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, bool bVis)
 {
-  // BRISK detector / descriptor
-  cv::Ptr<cv::FeatureDetector> detector = cv::BRISK::create();
-  
-  double t = (double)cv::getTickCount();
-  detector->detect(img, keypoints);
-  t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
-  cout << "BRISK detector with n= " << keypoints.size() << " keypoints in " << 1000 * t / 1.0 << " ms" << endl;
-  
-  return (1000.0*t);
+    // BRISK detector / descriptor
+    cv::Ptr<cv::FeatureDetector> detector = cv::BRISK::create();
+    
+    double t = (double)cv::getTickCount();
+    detector->detect(img, keypoints);
+    t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
+    cout << "BRISK detector with n= " << keypoints.size() << " keypoints in " << 1000 * t / 1.0 << " ms" << endl;
+    
+    return (1000.0*t);
 }
 
 
 double detKeypointsSIFT (std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, bool bVis)
 {
-  /*
     cv::Ptr<cv::FeatureDetector> siftDetector = cv::xfeatures2d::SIFT::create();
     
     double t = (double)cv::getTickCount();
@@ -327,26 +329,16 @@ double detKeypointsSIFT (std::vector<cv::KeyPoint> &keypoints, cv::Mat &img, boo
     t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
     cout << "SIFT detector with n= " << keypoints.size() << " keypoints in " << 1000 * t / 1.0 << " ms" << endl;
     
-    cv::Ptr<cv::DescriptorExtractor> siftDescriptor = cv::xfeatures2d::SIFT::create();
-    cv::Mat mDescSIFT;
-    t = (double)cv::getTickCount();
-    siftDescriptor->compute (img, keypoints, mDescSIFT);
-    t = ((double)cv::getTickCount() - t)/cv::getTickFrequency();
-    cout << "SIFT descriptor in " << (1000*t)/1.0 << "ms\n";
-    
     if (bVis)
     {
-    cv::Mat visImage;
-    visImage = img.clone();  // reset the visualizing  image
-    cv::drawKeypoints(img, keypoints, visImage, cv::Scalar::all(-1), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
-    string siftWin = "SIFT Results";
-    cv::namedWindow (siftWin, 1);
-    cv::imshow (siftWin, visImage);
-    cv::waitKey(0);
+	cv::Mat visImage;
+	visImage = img.clone();  // reset the visualizing  image
+	cv::drawKeypoints(img, keypoints, visImage, cv::Scalar::all(-1), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+	string siftWin = "SIFT Results";
+	cv::namedWindow (siftWin, 1);
+	cv::imshow (siftWin, visImage);
+	cv::waitKey(0);
     }
-
+    
     return (1000.0*t);
-    */
-  
-  return (0);
 }
