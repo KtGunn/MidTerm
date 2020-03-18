@@ -28,8 +28,8 @@ typedef enum {mat, desc, dt, sel} enmType;
 
 bool legitSelection (string cand, enmType type) {
 
-  static vector<string> vDescriptors = {"BRIEF", "ORB", "FREAK", "AKAZE", "SIFT", "BRISK"};
   static vector<string> vDetectors = {"SHITOMASI", "HARRIS", "BRISK", "FAST", "ORB", "AKAZE", "SIFT"};
+  static vector<string> vDescriptors = {"BRIEF", "ORB", "FREAK", "AKAZE", "SIFT", "BRISK"};
   static vector<string> vMatchers = {"MAT_BF", "MAT_FLANN"};
   static vector<string> vSelectors = {"SEL_NN", "SEL_KNN"};
 
@@ -129,17 +129,12 @@ int main(int argc, const char *argv[])
     return (0);
   }
   cout << " Selector TYPE '" << selectorType << "'\n";
-
   
-  ////////////////////////////////////////////////////////////
-  /// RESULTS FILE HEADER
-  //
+
   stringstream header;
-  header << endl << "DETECTOR " << detectorType << " DESCRIPTOR " << descriptorType
-         << " MATCHER " << matcherType << " SELECTOR " << selectorType << "'\n";
-
-  outFID << header.str ();
-
+  header << "DET " << detectorType << " DESC " << descriptorType << " MATCH "  << matcherType 
+	 << " SEL " << selectorType;
+  outFID << endl << header.str() << endl;
 
 
   /* INIT VARIABLES AND DATA STRUCTURES */
@@ -243,7 +238,6 @@ int main(int argc, const char *argv[])
         }
       else if (detectorType.compare("SIFT") == 0)
         {
-          // SIFT does not compile/link on my PC!
           detectMS = detKeypointsSIFT (keypoints, imgGray, false);
         }
       else
@@ -353,7 +347,9 @@ int main(int argc, const char *argv[])
           //string selectorType = "SEL_NN";       // SEL_NN, SEL_KNN
           
           // This is the 'norm' type
-          string matcherNorm = "DES_BINARY"; // DES_BINARY, DES_HOG
+          string matcherNorm;  // DES_BINARY, DES_HOG
+          matcherNorm = "DES_BINARY";
+          matcherNorm = "DES_HOG"; // When using SIFT
           
           //// STUDENT ASSIGNMENT
           //// TASK MP.5 -> add FLANN matching in file matching2D.cpp
@@ -361,6 +357,7 @@ int main(int argc, const char *argv[])
           ////              descriptor distance ratio filtering
           ////              with t=0.8 in file matching2D.cpp
           
+	  cout << " Calling matcher\n";
           matchDescriptors((dataBuffer.end() - 2)->keypoints, (dataBuffer.end() - 1)->keypoints,
                            (dataBuffer.end() - 2)->descriptors, (dataBuffer.end() - 1)->descriptors,
                            matches, matcherNorm, matcherType, selectorType);

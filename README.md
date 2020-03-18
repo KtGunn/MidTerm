@@ -1,6 +1,18 @@
-# SFND 2D Feature Tracking
+# Feature Tracking
 
 <img src="images/keypoints.png" width="820" height="248" />
+
+The midterm project is in three parts, MP7, MP8 and MP9.
+
+Project MP7:
+
+Given a set of 10 images, count the number of keypoints found in each image using the following keypoint detector methods:
+* SHITOMASI, HARRIS, BRISK, FAST, ORB, AKAZE, SIFT.
+
+The results I obtained and contained in an spread sheet and log file in the spreadsheets directory in file MP7.ods.
+The figure below is a screen shot of the summarized results:
+
+<img src="images/MP7.png" width="820" height="248" />
 
 The idea of the camera course is to build a collision detection system - that's the overall goal for the Final Project. As a preparation for this, you will now build the feature tracking part and test various detector / descriptor combinations to see which ones perform best. This mid-term project consists of four parts:
 
