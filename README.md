@@ -30,7 +30,7 @@ For the same set of 10 images of MP7, we are to count the number of matched keyp
 A brute force matcher is used and a KNN selector with a minimum descriptor distance ratio 0f 0.8.
 The figure below is a screen shot of the summarized results. 'AVG' refers to averaged results over ten images:
 
-<img src="images/MP8.png" />
+<img src="images/MP9.png" />
 
 As before detailed results are in found in the spreadsheets directory. The above image are averaged results. Column 'Matched' refers to the count of matched keypoints or features. Column '(kpts)' refers to keypoints in the second image and is included for reference. Finally, columnd 'Ratio' is the ratio of matched keypoints to keypoints in the second image.
 
